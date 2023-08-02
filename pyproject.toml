@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plearning"
+version = "1.0"
+description = "Modeling the initial state of early phonetic learning in infants."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Maxime Poli" }]
+dependencies = [
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "seaborn",
+    "scikit-learn",
+    "requests",
+    "rich",
+    "tabulate",
+    "tqdm",
+    "typer",
+]
+
+[project.scripts]
+plearning = "plearning.cli:main"
+
+[project.optional-dependencies]
+dev = ["ipykernel", "black", "ruff", "pre-commit", "nbconvert"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 119
+
+[tool.ruff]
+select = ["E", "F", "Q", "W", "I", "N", "A", "ANN"]
+ignore = ["ANN101", "ANN401"]
+line-length = 119
+
+[tool.ruff.isort]
+known-first-party = ["plearning"]
