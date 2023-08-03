@@ -20,9 +20,9 @@ This repository provides a CLI to build jobs to train and evaluate models with C
 ## Downloads
 
 Training data:
-- Ambient sounds: https://cognitive-ml.fr/downloads/init-plearning/train/ambient_sounds.tar (54G, md5sum: a625f3564a7697cf827d478118045c1c)
-- English training set: https://cognitive-ml.fr/downloads/init-plearning/train/english.tar (53G, md5sum: 8de965e97a6dbc73fcfdc994fceed750)
+- [Ambient sounds](https://cognitive-ml.fr/downloads/init-plearning/train/ambient_sounds.tar): 54G, md5sum: a625f3564a7697cf827d478118045c1c
+- [English training set](https://cognitive-ml.fr/downloads/init-plearning/train/english.tar): 53G, md5sum: 8de965e97a6dbc73fcfdc994fceed750
 
 Results:
-- ABX scores: https://cognitive-ml.fr/downloads/init-plearning/results/abx.tar.gz (19M, md5sum: 4afecc9416484af4e7fd61483012ee6c)
-- t-SNE data: https://cognitive-ml.fr/downloads/init-plearning/results/tsne.tar.gz (401M, md5sum: 13193518acb207f00858177eefc15ffb)
+- [ABX scores](https://cognitive-ml.fr/downloads/init-plearning/results/abx.tar.gz): 19M, md5sum: 4afecc9416484af4e7fd61483012ee6c
+- [t-SNE data](https://cognitive-ml.fr/downloads/init-plearning/results/tsne.tar.gz): 401M, md5sum: 13193518acb207f00858177eefc15ffb
