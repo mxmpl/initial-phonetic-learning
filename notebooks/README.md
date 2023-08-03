@@ -8,7 +8,7 @@ Use it only if you have LaTeX installed with the correct packages.
 
 ## Download ABX scores and t-SNE representations
 
-- Go to https://osf.io/e4rw2, and download `abx.tar.gz` and `tsne.tar.gz` in this folder.
+- Download [abx.tar.gz](https://cognitive-ml.fr/downloads/init-plearning/results/abx.tar.gz) and [tsne.tar.gz](https://cognitive-ml.fr/downloads/init-plearning/results/tsne.tar.gz) in this folder.
 - Run `tar xfz abx.tar.gz` and `tar xfz tsne.tar.gz`
 - Now you can reproduce the figures using the notebooks `trajectories.ipynb` and `tsne.ipynb`
 
