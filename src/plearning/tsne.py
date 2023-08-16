@@ -21,6 +21,7 @@ def build_tsne(
     seed: int = 0,
     is_untrained: bool = False,
 ) -> None:
+    """Compute output features and their t-SNE representations of a given model and test set"""
     try:
         import torch
     except ImportError as error:
