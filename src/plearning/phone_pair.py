@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal
 
 import pandas as pd
 
@@ -8,11 +8,11 @@ class PhonePair:
 
     def __init__(
         self,
-        pair: Optional[str] = None,
+        pair: str | None = None,
         language: Literal["Japanese", "English"] = "English",
         *,
-        first_phone: Optional[str] = None,
-        second_phone: Optional[str] = None,
+        first_phone: str | None = None,
+        second_phone: str | None = None,
         reverse_print: bool = False,
     ) -> None:
         self.first: str | None = None
@@ -70,7 +70,7 @@ class PhonePair:
 
 
 def _verify_phone_pair_input(
-    pair: Optional[str], first: Optional[str], second: Optional[str], language: Literal["Japanese", "English"]
+    pair: str | None, first: str | None, second: str | None, language: Literal["Japanese", "English"]
 ) -> None:
     if language not in ("Japanese", "English"):
         raise ValueError(f"Invalid language {language}." + " Only 'Japanese' and 'English' supported.")

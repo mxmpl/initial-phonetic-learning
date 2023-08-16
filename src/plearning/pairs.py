@@ -5,11 +5,10 @@ from pathlib import Path
 
 import pandas as pd
 
-Score = namedtuple("Score", ["first_phone", "second_phone", "mode", "score"])
-
 
 def abx_pairs(root: Path) -> None:
     """Compute ABX errors for every pair for each experiment found"""
+    Score = namedtuple("Score", ["first_phone", "second_phone", "mode", "score"])
     for extras_path in root.resolve().rglob("extras.pkl"):
         if (extras_path.parent / "ABX_pairs.csv").exists():
             continue

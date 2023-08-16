@@ -7,11 +7,10 @@ from tqdm import tqdm
 
 from plearning import CPC
 
-Score = namedtuple("Score", ["test", "train", "phone_pair", "split", "idx", "mode", "epoch", "score"])
-
 
 def recap_scores(results: Path, output: Path) -> None:
     """Recap all scores"""
+    Score = namedtuple("Score", ["test", "train", "phone_pair", "split", "idx", "mode", "epoch", "score"])
     scores = []
 
     for path in tqdm(list(results.resolve().rglob("ABX_args.json"))):

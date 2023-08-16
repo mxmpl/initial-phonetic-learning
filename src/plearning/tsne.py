@@ -8,10 +8,6 @@ from sklearn.manifold import TSNE
 
 from plearning import CPC
 
-FILE_EXTENSION = ".wav"
-
-PhoneInfos = namedtuple("PhoneInfos", ["idx", "context", "phone", "speaker"])
-
 
 def build_tsne(
     path_checkpoint: str,
@@ -57,23 +53,20 @@ def build_tsne(
     else:
         feature_function = base_features
 
-    seq_list, _ = findAllSeqs(path_dataset, extension=FILE_EXTENSION)
+    seq_list, _ = findAllSeqs(path_dataset, extension=CPC.file_extension)
     seq_list = [(str(Path(x).stem), str(Path(path_dataset) / x)) for (_, x) in seq_list]
 
     output.mkdir(exist_ok=True)
-    df = []
     dataset = abx_it.ABXFeatureLoader(path_item_file, seq_list, feature_function, 1 / feature_size, normalize=True)
     context_match = {v: k for k, v in dataset.context_match.items()}
     phone_match = {v: k for k, v in dataset.phone_match.items()}
     speaker_match = {v: k for k, v in dataset.speaker_match.items()}
-    full_data = []
+    full_data, df = [], []
 
+    PhoneInfos = namedtuple("PhoneInfos", ["idx", "context", "phone", "speaker"])
     for idx, (sample_data, _, (context_id, phone_id, speaker_id)) in enumerate(dataset):
-        context = context_match[context_id]
-        phone = phone_match[phone_id]
-        speaker = speaker_match[speaker_id]
         full_data.append(sample_data.mean(axis=0))
-        df.append(PhoneInfos(idx, context, phone, speaker))
+        df.append(PhoneInfos(idx, context_match[context_id], phone_match[phone_id], speaker_match[speaker_id]))
     data = torch.stack(full_data).numpy()
     phone_infos = pd.DataFrame(df)
 

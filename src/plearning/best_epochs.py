@@ -20,10 +20,10 @@ def best_epochs(
     cmd.append("--model_path")
     checkpoints = np.unique([path.parent for path in root.resolve().rglob("*.pt")])
     for directory in tqdm(checkpoints):
-        res = subprocess.run(cmd + [directory], text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-        if res.returncode != 0:
+        completed = subprocess.run(cmd + [directory], text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        if completed.returncode != 0:
             print(f"Failed for {directory}")
             continue
         model.append(str(directory))
-        epoch.append(int(res.stdout.split(" ")[-1]))
+        epoch.append(int(completed.stdout.split(" ")[-1]))
     pd.DataFrame({"model": model, "epoch": epoch}).to_csv(output, index=False)
