@@ -1,7 +1,16 @@
 import dataclasses
 import os
 from pathlib import Path
-from typing import Optional
+
+
+def default_data_directory() -> Path:
+    try:
+        scratch = os.environ["SCRATCH"]
+    except KeyError as error:
+        raise KeyError(
+            "Must set SCRATCH environment variable if you use CPCCommands without specifying `data`."
+        ) from error
+    return Path(scratch).resolve() / "data"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -10,7 +19,7 @@ class CPCCommands:
     strict: bool = True
     max_size_seq: int = 64000
     file_extension: str = ".wav"
-    data: Optional[Path] = None
+    data: Path = default_data_directory()
 
     evaluation_files: list[str] = dataclasses.field(
         default_factory=lambda: ["ABX_args.json", "ABX_scores.json", "extras.pkl"]
@@ -18,21 +27,11 @@ class CPCCommands:
 
     @property
     def test_items(self) -> dict[str, Path]:
-        if self.data is None:
-            try:
-                scratch = os.environ["SCRATCH"]
-            except KeyError as error:
-                raise KeyError(
-                    "Must set SCRATCH environment variable if you use CPCCommands without specifying `data`."
-                ) from error
-            data_root = Path(scratch).resolve()
-        else:
-            data_root = Path(self.data).resolve()
         test_items = {
-            "csj": data_root / "data/CSJ/test/test.item",
-            "gpj": data_root / "data/GPJ/test/test.item",
-            "buc": data_root / "data/BUC/test/test.item",
-            "wsj": data_root / "data/WSJ/test/test.item",
+            "csj": self.data / "CSJ/test/test.item",
+            "gpj": self.data / "GPJ/test/test.item",
+            "buc": self.data / "BUC/test/test.item",
+            "wsj": self.data / "WSJ/test/test.item",
         }
         for test, path in test_items.items():
             assert path.is_file(), test
