@@ -11,18 +11,18 @@ from plearning.utils import query
 ROOT = Path("./abx/")
 
 
-def get_jap(mean: pd.DataFrame, std: pd.DataFrame, score: str) -> tuple[float, float]:
-    csj = ((1 - mean[mean.test == "csj"][score].iloc[0]) * 100, std[std.test == "csj"][score].iloc[0] * 100)
-    gpj = ((1 - mean[mean.test == "gpj"][score].iloc[0]) * 100, std[std.test == "gpj"][score].iloc[0] * 100)
-    if std[std.test == "gpj"][score].iloc[0] == 0:
+def get_jap(mean: pd.DataFrame, std: pd.DataFrame, score_col: str) -> str:
+    csj = ((1 - mean[mean.test == "csj"][score_col].iloc[0]) * 100, std[std.test == "csj"][score_col].iloc[0] * 100)
+    gpj = ((1 - mean[mean.test == "gpj"][score_col].iloc[0]) * 100, std[std.test == "gpj"][score_col].iloc[0] * 100)
+    if std[std.test == "gpj"][score_col].iloc[0] == 0:
         return f"{csj[0]:0.1f} / {gpj[0]:0.1f}"
     return f"{csj[0]:0.1f} ({csj[1]:0.1f}) / {gpj[0]:0.1f} ({gpj[1]:0.1f})"
 
 
-def get_english(mean: pd.DataFrame, std: pd.DataFrame, score: str) -> tuple[float, float]:
-    buc = ((1 - mean[mean.test == "buc"][score].iloc[0]) * 100, std[std.test == "buc"][score].iloc[0] * 100)
-    wsj = ((1 - mean[mean.test == "wsj"][score].iloc[0]) * 100, std[std.test == "wsj"][score].iloc[0] * 100)
-    if std[std.test == "buc"][score].iloc[0] == 0:
+def get_english(mean: pd.DataFrame, std: pd.DataFrame, score_col: str) -> str:
+    buc = ((1 - mean[mean.test == "buc"][score_col].iloc[0]) * 100, std[std.test == "buc"][score_col].iloc[0] * 100)
+    wsj = ((1 - mean[mean.test == "wsj"][score_col].iloc[0]) * 100, std[std.test == "wsj"][score_col].iloc[0] * 100)
+    if std[std.test == "buc"][score_col].iloc[0] == 0:
         return f"{buc[0]:0.1f} / {wsj[0]:0.1f}"
     return f"{buc[0]:0.1f} ({buc[1]:0.1f}) / {wsj[0]:0.1f} ({wsj[1]:0.1f})"
 

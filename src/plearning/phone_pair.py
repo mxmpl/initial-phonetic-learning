@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Tuple, Union
+from typing import Literal, Optional
 
 import pandas as pd
 
@@ -15,37 +15,33 @@ class PhonePair:
         second_phone: Optional[str] = None,
         reverse_print: bool = False,
     ) -> None:
+        self.first: str | None = None
+        self.second: str | None = None
+        self._language = language
+        self.reverse_print = reverse_print
+
         if pd.isna(pair):
             pair = None
         _verify_phone_pair_input(pair, first_phone, second_phone, language)
-        self._language = language
-        if language == "Japanese":
-            alphabet = JAPANESE_PHONES
-        else:
-            alphabet = AMERICAN_ENGLISH_PHONES
+        alphabet = JAPANESE_PHONES if language == "Japanese" else AMERICAN_ENGLISH_PHONES
         if pair is not None:
             first_phone, second_phone = pair.replace("[", "").replace("]", "").split("-")
         if (first_phone is not None) and (second_phone is not None):
             first_phone, second_phone = _fix_pair(first_phone, second_phone, language)
             self.first = alphabet[first_phone]
             self.second = alphabet[second_phone]
-        else:
-            self.first, self.second = None, None
-        self.reverse_print = reverse_print
 
-    def __eq__(self, other: Union["PhonePair", str]) -> bool:
-        if isinstance(other, PhonePair):
-            if self.first is None:
-                return other.first is None and other.second is None
-            return (self.first == other.first) and (self.second == other.second)
-        elif isinstance(other, str):
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, PhonePair) and not isinstance(other, str):
+            return NotImplemented
+        if isinstance(other, str):
             try:
-                return self == PhonePair(other, self._language)
-            except KeyError:
+                other = PhonePair(other, self._language)
+            except (KeyError, ValueError):
                 return False
-            except ValueError:
-                return False
-        return False
+        if self.first is None:
+            return other.first is None and other.second is None
+        return (self.first == other.first) and (self.second == other.second)
 
     def __repr__(self) -> str:
         return f"PhonePair(first={self.first}, second={self.second}, _language={self._language})"
@@ -62,7 +58,7 @@ class PhonePair:
 
     @property
     def tipa(self) -> str:
-        if self.first is None:
+        if self.first is None or self.second is None:
             return self._NO_PAIR_STRING
         if self.reverse_print:
             return f"[{TIPA[self.second]}]-[{TIPA[self.first]}]"
@@ -74,10 +70,7 @@ class PhonePair:
 
 
 def _verify_phone_pair_input(
-    pair: Optional[str],
-    first: Optional[str],
-    second: Optional[str],
-    language: Literal["Japanese", "English"],
+    pair: Optional[str], first: Optional[str], second: Optional[str], language: Literal["Japanese", "English"]
 ) -> None:
     if language not in ("Japanese", "English"):
         raise ValueError(f"Invalid language {language}." + " Only 'Japanese' and 'English' supported.")
@@ -89,7 +82,7 @@ def _verify_phone_pair_input(
         raise ValueError("Must provide either the pair or both phones.")
 
 
-def _fix_pair(first_phone: str, second_phone: str, language: str) -> Tuple[str, str]:
+def _fix_pair(first_phone: str, second_phone: str, language: str) -> tuple[str, str]:
     if not first_phone < second_phone:
         first_phone, second_phone = second_phone, first_phone
     if first_phone == "W" and second_phone == "Y" and language == "Japanese":

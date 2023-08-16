@@ -11,6 +11,7 @@ requires-python = ">=3.10"
 license = { file = "LICENSE" }
 authors = [{ name = "Maxime Poli" }]
 dependencies = [
+    "joblib",
     "matplotlib",
     "numpy",
     "pandas",
@@ -27,10 +28,13 @@ dependencies = [
 plearning = "plearning.cli:main"
 
 [project.optional-dependencies]
-dev = ["ipykernel", "black", "ruff", "pre-commit", "nbconvert"]
+dev = ["ipykernel", "black", "ruff", "pre-commit", "mypy", "nbconvert"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+plearning = ["py.typed"]
 
 [tool.black]
 line-length = 119
@@ -42,3 +46,15 @@ line-length = 119
 
 [tool.ruff.isort]
 known-first-party = ["plearning"]
+
+[[tool.mypy.overrides]]
+module = [
+    "cpc.*",
+    "joblib",
+    "pandas",
+    "pyannote.audio",
+    "torchaudio",
+    "sklearn.*",
+    "tqdm",
+]
+ignore_missing_imports = true

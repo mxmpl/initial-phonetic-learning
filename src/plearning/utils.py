@@ -1,3 +1,5 @@
+import logging
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -8,7 +10,23 @@ from plearning.phone_pair import PhonePair
 DATASETS_LANG = {"csj": "Japanese", "gpj": "Japanese", "wsj": "English", "buc": "English"}
 
 
-def query(df: pd.DataFrame, **kwargs: dict[str, Any]) -> np.ndarray:
+def get_logger(
+    name: str, *, filename: Path | None = None, formatter: str = "%(asctime)s - %(levelname)s - %(message)s"
+) -> logging.Logger:
+    logger = logging.getLogger(name)
+    handler: logging.Handler
+    if filename is None:
+        handler = logging.StreamHandler()
+    else:
+        handler = logging.FileHandler(filename)
+    handler.setFormatter(logging.Formatter(formatter))
+    logger.handlers = []
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+    return logger
+
+
+def query(df: pd.DataFrame, **kwargs: Any) -> np.ndarray:
     conditions = []
     for key, value in kwargs.items():
         if value is None or (isinstance(value, PhonePair) and value.first is None):
@@ -19,7 +37,7 @@ def query(df: pd.DataFrame, **kwargs: dict[str, Any]) -> np.ndarray:
 
 
 def native_nonnative_selection(
-    df: pd.DataFrame, datasets: list[str], **kwargs: dict[str, Any]
+    df: pd.DataFrame, datasets: list[str], **kwargs: Any
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     native_idx, non_native_idx = None, None
     for test in datasets:

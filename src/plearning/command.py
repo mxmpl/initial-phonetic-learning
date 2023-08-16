@@ -8,7 +8,7 @@ from typing import Optional
 class CPCCommands:
     seq_norm: bool = True
     strict: bool = True
-    max_size_seq: bool = 64000
+    max_size_seq: int = 64000
     file_extension: str = ".wav"
     data: Optional[Path] = None
 
