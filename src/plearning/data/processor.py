@@ -78,11 +78,13 @@ def process_audio(input_dir: Path, output_dir: Path, channels: Channels = Channe
     launcher(delayed(worker)(inp, output) for inp, output in zip(input_files, output_files))
 
 
-def create_segments(segments_csv: Path, input_dir: Path, output_dir: Path, n_jobs: int = -1) -> None:
+def create_segments(
+    segments_csv: Path, input_dir: Path, output_dir: Path, channels: Channels = Channels.IGNORE, n_jobs: int = -1
+) -> None:
     """Create segments with sox"""
     segments = pd.read_csv(segments_csv)
     output_dir.mkdir(exist_ok=True)
-    worker = _make_worker(SoxProcessor(), get_logger("sox", filename=output_dir / "segments.log"))
+    worker = _make_worker(SoxProcessor(channels=channels), get_logger("sox", filename=output_dir / "segments.log"))
 
     to_build: list[tuple[str, str, float, float]] = []
     for _, row in segments.iterrows():

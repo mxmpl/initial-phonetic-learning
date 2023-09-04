@@ -5,7 +5,7 @@
 The full dataset is available [here](https://cognitive-ml.fr/downloads/init-plearning/train/ambient_sounds.tar) (54G, md5sum: a625f3564a7697cf827d478118045c1c).
 
 It is made of:
-- 78 hours of field recordings of animals from the Animal Sound Archive [1, 2]. [License CC BY 4.0](https://creativecommons.org/licenses/by/4.0).
+- 78 hours of field recordings of animals from the Animal Sound Archive [1, 2]. The occurrence data from GBIF is distributed under the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) license. The audio files are under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) and [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0). The metadata CSV file contains the licenses of each file.
 - 422 hours from Audioset [3]. [License CC BY 4.0](https://creativecommons.org/licenses/by/4.0).
 
 ## Recreate the dataset
