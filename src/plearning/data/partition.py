@@ -32,12 +32,12 @@ def greedy_split(all_segments: list[pd.DataFrame], split: int, groupby_key: Grou
     return result
 
 
-def _symlink_partitions(
-    input_dir: Path, destination: Path, partition: pd.DataFrame, groupby_key: GroupbyKey
+def symlink_data(
+    segments: pd.DataFrame, input_dir: Path, destination: Path, groupby_key: GroupbyKey = GroupbyKey.SEGMENT
 ) -> pd.DataFrame:
     """Symlink file in partitions to the true files"""
     destination.mkdir()
-    for speaker_id, subdf in partition.groupby("speaker_id"):
+    for speaker_id, subdf in segments.groupby("speaker_id"):
         if groupby_key == GroupbyKey.SPEAKER:
             (destination / str(speaker_id)).symlink_to(input_dir / str(speaker_id), True)
         elif groupby_key == GroupbyKey.SEGMENT:
@@ -76,6 +76,6 @@ def create_partitions(
             for idx, partition in enumerate(partitions):
                 partition["split_id"] = idx
                 if do_symlink:
-                    _symlink_partitions(full_dir, output_dir / f"{split}/{idx}", partition, groupby_key)
+                    symlink_data(partition, full_dir, output_dir / f"{split}/{idx}", groupby_key)
             pd.concat(partitions).to_csv(csv_dir / f"{split}.csv", index=False)
             pbar.update()
