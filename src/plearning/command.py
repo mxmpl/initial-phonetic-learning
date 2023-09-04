@@ -8,7 +8,7 @@ def default_data_directory() -> Path:
         scratch = os.environ["SCRATCH"]
     except KeyError as error:
         raise KeyError(
-            "Must set SCRATCH environment variable if you use CPCCommands without specifying `data`."
+            "Must set SCRATCH environment variable if you use CPCCommands without specifying `data_dir`."
         ) from error
     return Path(scratch).resolve() / "data"
 
@@ -19,11 +19,17 @@ class CPCCommands:
     strict: bool = True
     max_size_seq: int = 64000
     file_extension: str = ".wav"
-    data: Path = default_data_directory()
+    data_dir: str = ""
 
     evaluation_files: list[str] = dataclasses.field(
         default_factory=lambda: ["ABX_args.json", "ABX_scores.json", "extras.pkl"]
     )
+
+    @property
+    def data(self) -> Path:
+        if not self.data_dir:
+            return default_data_directory()
+        return Path(self.data_dir).resolve()
 
     @property
     def test_items(self) -> dict[str, Path]:
