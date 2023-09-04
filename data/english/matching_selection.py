@@ -4,12 +4,14 @@ from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
 
+from plearning.data import symlink_data
 
-def select_matching_subset(japanese_train_segments: pd.DataFrame, librivox_segments: pd.DataFrame) -> pd.DataFrame:
+
+def select_matching_subset(csj_train_segments: pd.DataFrame, librivox_segments: pd.DataFrame) -> pd.DataFrame:
     """Select a subset of LibriVox matched to CSJ."""
-    japanese_train_segments["duration"] = japanese_train_segments["end"] - japanese_train_segments["start"]
+    csj_train_segments["duration"] = csj_train_segments["end"] - csj_train_segments["start"]
     librivox_segments["duration"] = librivox_segments["end"]
-    durations = japanese_train_segments.groupby("speaker_id").duration.sum().sort_values()
+    durations = csj_train_segments.groupby("speaker_id").duration.sum().sort_values()
     durations_librivox = librivox_segments.groupby(["speaker_id"]).duration.sum().sort_values()
 
     speaker_mapping: dict[str, str] = {}
@@ -39,13 +41,18 @@ if __name__ == "__main__":
         + "of speakers and speech quantity per speaker.",
         epilog="Download and segment data with Libri-Light before: https://github.com/facebookresearch/libri-light",
     )
-    parser.add_argument("root")
-    parser.add_argument("japanese_train_segments")
-    parser.add_argument("librivox_segments")
+    parser.add_argument("root", help="dataset to build")
+    parser.add_argument("csj_train_segments", help="CSV file of Japanese train segments")
+    parser.add_argument("librivox_data", help="directory of audio files of LibriVox")
+    parser.add_argument("librivox_segments", help="CSV file of all segments in LibriVox")
     args = parser.parse_args()
 
-    csv = Path(args.root) / "csv/train_segments.csv"
+    root = Path(args.root).resolve()
+    csv = root / "csv/train_segments.csv"
     csv.parent.mkdir(exist_ok=True, parents=True)
-    japanese_train_segments = pd.read_csv(args.japanese_train_segments)
+    csj_train_segments = pd.read_csv(args.csj_train_segments)
     librivox_segments = pd.read_csv(args.librivox_segments)
-    select_matching_subset(japanese_train_segments, librivox_segments).to_csv(csv)
+    train_segments = select_matching_subset(csj_train_segments, librivox_segments)
+    train_segments.to_csv(csv)
+
+    symlink_data(train_segments, args.librivox_data, root / "train/full")
