@@ -24,7 +24,7 @@ class Channels(StrEnum):
 class SoxProcessor:
     sample_rate: int = 16_000
     extension: str = CPC.file_extension
-    channels: Channels = Channels.MONO
+    channels: Channels = Channels.IGNORE
     precision: int = 16
 
     def __post_init__(self) -> None:
@@ -65,11 +65,11 @@ def _make_worker(processor: SoxProcessor, logger: logging.Logger) -> Callable:
     return worker
 
 
-def process_audio(input_dir: Path, output_dir: Path, n_jobs: int = -1) -> None:
+def process_audio(input_dir: Path, output_dir: Path, channels: Channels = Channels.IGNORE, n_jobs: int = -1) -> None:
     """Process audio files with sox"""
     input_dir, output_dir = input_dir.resolve(), output_dir.resolve()
     output_dir.mkdir(exist_ok=True)
-    worker = _make_worker(SoxProcessor(), get_logger("sox", filename=output_dir / "process.log"))
+    worker = _make_worker(SoxProcessor(channels=channels), get_logger("sox", filename=output_dir / "process.log"))
 
     input_files = sorted([file for file in input_dir.glob("*") if file.is_file()])
     output_files = [output_dir / file.with_suffix(CPC.file_extension).name for file in input_files]
