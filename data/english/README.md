@@ -9,6 +9,6 @@ If you want to reproduce the experiments either:
   - Then select the audio files using using `matching_selection.py`
 
 Then use the following command to split the full dataset in smaller subsets:
-```py
+```bash
 plearning data partition $DATASET/train/full $DATASET/csv/train_segments.csv
 ```

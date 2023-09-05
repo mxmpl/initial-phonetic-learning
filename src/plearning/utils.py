@@ -81,3 +81,33 @@ def make_pairwise_score(score: pd.DataFrame, col: str) -> pd.DataFrame:
         subdf["split"] = split
         subdfs.append(subdf)
     return pd.concat(subdfs, ignore_index=True)
+
+
+def read_item(filepath_or_buffer: str | Path) -> pd.DataFrame:
+    """Read an .item file into a pandas DataFrame"""
+    item_file = pd.read_csv(filepath_or_buffer, sep=" ")
+    item_file.rename(
+        {
+            "#file": "seg_id",
+            "speaker": "speaker_id",
+            "onset": "start",
+            "offset": "end",
+        },
+        axis=1,
+        inplace=True,
+    )
+    return item_file
+
+
+def df_to_item(dataframe: pd.DataFrame, path_or_buf: str | Path) -> None:
+    """Convert a segments DataFrame into a .item file"""
+    item = dataframe.rename(
+        {
+            "seg_id": "#file",
+            "start": "onset",
+            "end": "offset",
+            "speaker_id": "speaker",
+        },
+        axis=1,
+    )[["#file", "onset", "offset", "#phone", "prev-phone", "next-phone", "speaker"]]
+    item.to_csv(path_or_buf, sep=" ", index=False)
