@@ -1,5 +1,6 @@
 import typer
 
+from plearning.archive import archive
 from plearning.best_epochs import best_epochs
 from plearning.data import create_partitions, create_segments, process_audio, vad, verify
 from plearning.evaluate import evaluate_cpc_best_epochs, evaluate_cpc_pre_computed, evaluate_mfcc
@@ -30,6 +31,7 @@ main.command(name="scores")(recap_scores)
 main.command(name="mfcc")(compute_mfcc)
 main.command(name="best_epochs")(best_epochs)
 main.command(name="tsne")(build_tsne)
+main.command(name="archive")(archive)
 
 if __name__ == "__main__":
     main()
