@@ -41,36 +41,27 @@ class Evaluator:
     def __call__(self, output: Path) -> None:
         output = output.resolve()
         cmds: list[tuple[str, bool]] = sum(
-            [self._make_jobs(output / test, item) for (test, item) in CPC.test_items.items()],
-            [],
+            [self._make_jobs(output / test, item) for (test, item) in CPC.test_items.items()], []
         )
         (output / "cmd.sh").write_text("\n".join([cmd for cmd, _ in cmds]) + "\n")
         (output / "to_run.sh").write_text("\n".join([cmd for cmd, to_run in cmds if to_run]) + "\n")
 
 
-def evaluate_cpc_best_epochs(
-    eval_abx: Path, output: Path, checkpoints: Path, best_epochs: Path, max_epochs: int = 100, hierarchy_depth: int = 1
-) -> None:
+def evaluate_cpc_best_epochs(eval_abx: Path, output: Path, best_epochs: Path, hierarchy_depth: int = 1) -> None:
     """Create jobs to evaluate all models given their best epoch on the validation set"""
     eval_abx = eval_abx.resolve()
-    checkpoints = checkpoints.resolve()
     assert eval_abx.is_file()
-    assert checkpoints.is_dir()
     assert hierarchy_depth >= 1
 
     def generator(out: Path) -> Generator[tuple[Path, Path], None, None]:
-        epochs = pd.read_csv(best_epochs.resolve()).set_index("model")
-        for chk in checkpoints.rglob(f"checkpoint_{max_epochs - 1}.pt"):
-            checkpoint = chk.parent / "checkpoint_{}.pt".format(int(epochs.loc[str(chk.parent)]))
+        epochs = pd.read_csv(best_epochs.resolve()).set_index("model")["epoch"]
+        for model, epoch in epochs.items():
+            checkpoint = Path(model) / f"checkpoint_{epoch}.pt"
             out_checkpoint = out / get_last_parts(checkpoint, hierarchy_depth).with_suffix("")
             yield checkpoint, out_checkpoint
 
     def cmd_func(**kwargs: Union[Path, str]) -> str:
-        return CPC.evaluation().format(
-            eval_abx=eval_abx,
-            dataset=Path(kwargs["item"]).parent,
-            **kwargs,
-        )
+        return CPC.evaluation().format(eval_abx=eval_abx, dataset=Path(kwargs["item"]).parent, **kwargs)
 
     Evaluator(cmd_func, generator)(output)
 
