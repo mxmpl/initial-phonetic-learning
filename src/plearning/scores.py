@@ -8,7 +8,7 @@ from tqdm import tqdm
 from plearning import CPC
 
 
-def recap_scores(results: Path, output: Path) -> None:
+def recap_scores(results: Path, output: Path, train_parent: int = 0) -> None:
     """Recap all scores"""
     Score = namedtuple("Score", ["test", "train", "phone_pair", "split", "idx", "mode", "epoch", "score"])
     scores = []
@@ -20,11 +20,12 @@ def recap_scores(results: Path, output: Path) -> None:
         mode = abx_args["mode"]
         item_file = abx_args["path_item_file"]
         epoch = int(checkpoint.stem.split("_")[1])
-        train = checkpoint.parent.stem.split("_")[0].removeprefix("cpc-")
+        correct_parent = list(checkpoint.parents)[train_parent]
+        train = correct_parent.stem.split("_")[0].removeprefix("cpc-")
         test_candidates = [test for test, item in CPC.test_items.items() if str(item) == item_file]
         assert len(test_candidates) == 1
         test = test_candidates[0]
-        split_str, idx_str = checkpoint.parent.stem.split("_")[-2:]
+        split_str, idx_str = correct_parent.stem.split("_")[-2:]
         if idx_str == "full":
             split, idx = 1, 0
         else:

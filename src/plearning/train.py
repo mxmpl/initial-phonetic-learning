@@ -54,7 +54,7 @@ def launch_training(
         chk_to_retrain_new_dataset = chk_to_retrain_new_dataset.resolve()
 
     checkpoint_dir.mkdir(exist_ok=True, parents=True)
-    assert template.is_file()
+    assert template.is_file(), f"{template} is not a file"
     assert (not full and (split is not None) and (idx is not None)) or (full and (split is None) and (idx is None))
 
     if "SCRATCH" not in os.environ:
@@ -84,7 +84,5 @@ def launch_training(
             move_train_directory(chk_to_retrain_new_dataset, destination, CPC.data / db_path)
     cmd += [str(template), str(CPC.data / db_path), str(destination), str(max_epochs)]
 
-    if (destination / f"checkpoint_{max_epochs-1}.pt").exists():
-        print(f"Already done for {destination}.")
-    else:
+    if not (destination / f"checkpoint_{max_epochs-1}.pt").exists():
         print(" ".join(cmd))
